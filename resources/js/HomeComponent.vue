@@ -1,21 +1,35 @@
 <template>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">Example Component</div>
 
-          <div class="card-body">
-            I'm an Home component. {{name}}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <header>
+    <h2 class="app-heading">Apartments shop</h2>
+  </header>
+  <main>
+    <form-component/>
+  </main>
+  <footer>Some copyright information</footer>
+
 </template>
 
 <script setup lang="ts">
-  import {ref} from "vue";
+import {ref} from "vue";
+import FormComponent from "./components/FormComponent.vue";
 
-  const name = ref<string>('Home');
+const name = ref<string>('Home');
 </script>
+
+<style>
+.app-heading {
+  text-align: center;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+main {
+  padding: 15px
+}
+
+</style>

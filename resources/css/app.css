@@ -1,0 +1,20 @@
+header {
+    min-height: 50px;
+    background: lightcyan;
+}
+
+footer {
+    min-height: 50px;
+    background: PapayaWhip;
+}
+
+body, #app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+}
