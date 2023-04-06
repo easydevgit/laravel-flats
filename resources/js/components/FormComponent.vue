@@ -36,7 +36,7 @@ import {reactive} from "vue";
 import {useQuery} from "@tanstack/vue-query";
 import {getFlats} from "../queries/getFlats";
 import FlatsTable from "./FlatsTable.vue";
-import {useThrottleFn} from '@vueuse/core'
+import {useDebounceFn} from '@vueuse/core'
 
 const flatInfo = reactive({
   name: '',
@@ -51,7 +51,7 @@ const flatInfo = reactive({
 
 const {isLoading, isError, data} = useQuery({
   queryKey: ['flats', flatInfo],
-  queryFn: useThrottleFn(() => getFlats(flatInfo), 1000),
+  queryFn: useDebounceFn(() => getFlats(flatInfo), 1000),
 })
 </script>
 
