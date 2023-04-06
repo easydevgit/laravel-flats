@@ -5,10 +5,11 @@
  */
 
 import './bootstrap';
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import { VueQueryPlugin } from "@tanstack/vue-query";
+import {VueQueryPlugin} from "@tanstack/vue-query";
+import HomeComponent from './HomeComponent.vue';
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
@@ -19,7 +20,6 @@ import { VueQueryPlugin } from "@tanstack/vue-query";
 const app = createApp({});
 app.use(ElementPlus)
 app.use(VueQueryPlugin)
-import HomeComponent from './HomeComponent.vue';
 app.component('home-component', HomeComponent);
 
 /**

@@ -7,7 +7,6 @@ use App\Http\Resources\FlatResource;
 use App\Models\Flat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
 
 
 class FlatController extends Controller
