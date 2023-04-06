@@ -6,7 +6,7 @@
     <el-table-column prop="bathroom" label="Bathrooms"/>
     <el-table-column prop="storey" label="Storeys"/>
     <el-table-column prop="garage" label="Garages"/>
-    <el-table-column prop="price" label="maxPrice"/>
+    <el-table-column prop="price" label="Price"/>
   </el-table>
 </template>
 
