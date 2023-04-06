@@ -38,11 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, watch} from "vue";
+import {reactive, ref} from "vue";
 import {useQuery} from "@tanstack/vue-query";
 import {getFlats} from "../queries/getFlats";
 import FlatsTable from "./FlatsTable.vue";
-import {useThrottleFn} from '@vueuse/core'
+import {useDebounce} from "../composables/useDebounce";
 
 const flatInfo = reactive({
   name: '',
@@ -54,12 +54,7 @@ const flatInfo = reactive({
   maxPrice: '',
 })
 let shouldFetch = ref(true)
-
-const toggleShouldFetch = useThrottleFn(() => {
-  shouldFetch.value = !shouldFetch.value
-}, 1500)
-
-watch(flatInfo, toggleShouldFetch)
+useDebounce(flatInfo, shouldFetch)
 
 
 const {isLoading, isError, data} = useQuery({
