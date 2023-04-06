@@ -53,7 +53,7 @@ const flatInfo = reactive({
   minPrice: '',
   maxPrice: '',
 })
-let shouldFetch = ref(false)
+let shouldFetch = ref(true)
 
 const toggleShouldFetch = useThrottleFn(() => {
   shouldFetch.value = !shouldFetch.value
