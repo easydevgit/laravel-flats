@@ -1,42 +1,48 @@
 <template>
   <div class="row">
     <span class="row__title">Name</span>
-    <el-input v-model="flatInfo.name" class="row__input" type="string" placeholder="Choose name"/>
+    <el-input v-model="flatInfo.name" class="row__input" type="string" maxlength="255" placeholder="Choose name"/>
   </div>
   <div class="row">
     <span class="row__title">Bedrooms</span>
-    <el-input v-model="flatInfo.bedroom" class="row__input" type="number" min="0" placeholder="number of bedrooms"/>
+    <el-input v-model="flatInfo.bedroom" class="row__input" type="number" min="0" max="1000"
+              placeholder="number of bedrooms"/>
   </div>
   <div class="row">
     <span class="row__title">Bathrooms</span>
-    <el-input v-model="flatInfo.bathroom" class="row__input" type="number" min="0" placeholder="number of bathroom"/>
+    <el-input v-model="flatInfo.bathroom" class="row__input" type="number" min="0" max="1000"
+              placeholder="number of bathroom"/>
   </div>
   <div class="row">
     <span class="row__title">Garages</span>
-    <el-input v-model="flatInfo.garage" class="row__input" type="number" min="0" placeholder="number of garages"/>
+    <el-input v-model="flatInfo.garage" class="row__input" type="number" min="0" max="1000"
+              placeholder="number of garages"/>
   </div>
   <div class="row">
     <span class="row__title">Storeys</span>
-    <el-input v-model="flatInfo.storey" class="row__input" type="number" min="0" placeholder="number of storeys"/>
+    <el-input v-model="flatInfo.storey" class="row__input" type="number" min="0" max="1000"
+              placeholder="number of storeys"/>
   </div>
   <div class="row">
     <span class="row__title">Minimum price</span>
-    <el-input v-model="flatInfo.minPrice" class="row__input" type="number" min="0" placeholder="Minimum price"/>
+    <el-input v-model="flatInfo.minPrice" class="row__input" type="number" min="0" max="99999999999999"
+              placeholder="Minimum price"/>
   </div>
   <div class="row">
     <span class="row__title">Maximum price</span>
-    <el-input v-model="flatInfo.maxPrice" class="row__input" type="number" min="0" placeholder="Maximum price"/>
+    <el-input v-model="flatInfo.maxPrice" class="row__input" type="number" min="0" max="99999999999999"
+              placeholder="Maximum price"/>
   </div>
-  <flats-table :flats-list="data" :loading="isLoading"/>
+  <flats-table :flats-list="data || []" :loading="isLoading"/>
   <div v-if="isError">Some Error Happens</div>
 </template>
 
 <script setup lang="ts">
-import {reactive} from "vue";
+import {reactive, ref, watch} from "vue";
 import {useQuery} from "@tanstack/vue-query";
 import {getFlats} from "../queries/getFlats";
 import FlatsTable from "./FlatsTable.vue";
-import {useDebounceFn} from '@vueuse/core'
+import {useThrottleFn} from '@vueuse/core'
 
 const flatInfo = reactive({
   name: '',
@@ -47,11 +53,19 @@ const flatInfo = reactive({
   minPrice: '',
   maxPrice: '',
 })
+let shouldFetch = ref(false)
+
+const toggleShouldFetch = useThrottleFn(() => {
+  shouldFetch.value = !shouldFetch.value
+}, 1500)
+
+watch(flatInfo, toggleShouldFetch)
 
 
 const {isLoading, isError, data} = useQuery({
   queryKey: ['flats', flatInfo],
-  queryFn: useDebounceFn(() => getFlats(flatInfo), 1000),
+  queryFn: () => getFlats(flatInfo),
+  enabled: shouldFetch,
 })
 </script>
 

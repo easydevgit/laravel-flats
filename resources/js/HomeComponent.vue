@@ -3,7 +3,7 @@
     <h2 class="app-heading">Apartments shop</h2>
   </header>
   <main>
-    <form-component/>
+    <form-component />
   </main>
   <footer>Some copyright information</footer>
 
