@@ -1,5 +1,4 @@
 <template>
-
   <header>
     <h2 class="app-heading">Apartments shop</h2>
   </header>
@@ -11,10 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
 import FormComponent from "./components/FormComponent.vue";
-
-const name = ref<string>('Home');
 </script>
 
 <style>
