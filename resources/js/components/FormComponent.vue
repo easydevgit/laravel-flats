@@ -1,48 +1,95 @@
 <template>
-  <div class="row">
-    <span class="row__title">Name</span>
-    <el-input v-model="flatInfo.name" class="row__input" type="string" maxlength="255" placeholder="Choose name"/>
-  </div>
-  <div class="row">
-    <span class="row__title">Bedrooms</span>
-    <el-input v-model="flatInfo.bedroom" class="row__input" type="number" min="0" max="1000"
-              placeholder="number of bedrooms"/>
-  </div>
-  <div class="row">
-    <span class="row__title">Bathrooms</span>
-    <el-input v-model="flatInfo.bathroom" class="row__input" type="number" min="0" max="1000"
-              placeholder="number of bathroom"/>
-  </div>
-  <div class="row">
-    <span class="row__title">Garages</span>
-    <el-input v-model="flatInfo.garage" class="row__input" type="number" min="0" max="1000"
-              placeholder="number of garages"/>
-  </div>
-  <div class="row">
-    <span class="row__title">Storeys</span>
-    <el-input v-model="flatInfo.storey" class="row__input" type="number" min="0" max="1000"
-              placeholder="number of storeys"/>
-  </div>
-  <div class="row">
-    <span class="row__title">Minimum price</span>
-    <el-input v-model="flatInfo.minPrice" class="row__input" type="number" min="0" max="99999999999999"
-              placeholder="Minimum price"/>
-  </div>
-  <div class="row">
-    <span class="row__title">Maximum price</span>
-    <el-input v-model="flatInfo.maxPrice" class="row__input" type="number" min="0" max="99999999999999"
-              placeholder="Maximum price"/>
-  </div>
+  <el-form
+      ref="formRef"
+      :model="flatInfo"
+      label-width="100px"
+
+  >
+    <el-form-item
+        label="Name"
+        prop="name"
+        :rules="[
+        { min: 3, max: 255, message: 'Length should be 3 to 255', trigger: 'change' }
+      ]"
+    >
+      <el-input v-model="flatInfo.name" class="row__input" type="string" maxlength="255" placeholder="Choose name"/>
+    </el-form-item>
+
+    <el-form-item
+        label="Bedrooms"
+        prop="bedroom"
+        :rules="[
+        { max: 2, message: 'To big value', trigger: 'change' }
+      ]"
+    >
+      <el-input v-model="flatInfo.bedroom" class="row__input" type="number" placeholder="Number of bedrooms"/>
+    </el-form-item>
+
+    <el-form-item
+        label="Bathrooms"
+        prop="bathroom"
+        :rules="[
+        { max: 2, message: 'To big value', trigger: 'change' }
+      ]"
+    >
+      <el-input v-model="flatInfo.bathroom" class="row__input" type="number" placeholder="Number of bathroom"/>
+    </el-form-item>
+
+    <el-form-item
+        label="Garages"
+        prop="garage"
+        :rules="[
+        { max: 2, message: 'To big value', trigger: 'change' }
+      ]"
+    >
+      <el-input v-model="flatInfo.garage" class="row__input" type="number" min="0"
+                placeholder="number of garages"/>
+    </el-form-item>
+
+    <el-form-item
+        label="Storeys"
+        prop="storey"
+        :rules="[
+        { max: 2, message: 'To big value', trigger: 'change' }
+      ]"
+    >
+      <el-input v-model="flatInfo.storey" class="row__input" type="number" min="0"
+                placeholder="number of storeys"/>
+    </el-form-item>
+
+    <el-form-item
+        label="Min price"
+        prop="minPrice"
+        :rules="[
+        { max: 20, message: 'To big value', trigger: 'change' }
+      ]">
+
+      <el-input v-model="flatInfo.minPrice" class="row__input" type="number" min="0" max="99999999999999"
+                placeholder="Min price"/>
+    </el-form-item>
+
+    <el-form-item
+        label="Max price"
+        prop="maxPrice"
+        :rules="[
+        { max: 20, message: 'To big value', trigger: 'change' }
+      ]">
+      <el-input v-model="flatInfo.maxPrice" class="row__input" type="number" min="0" max="99999999999999"
+                placeholder="Max price"/>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="submitForm(formRef)">Submit</el-button>
+      <el-button @click="resetForm(formRef)">Reset</el-button>
+    </el-form-item>
+  </el-form>
   <flats-table :flats-list="data || []" :loading="isLoading"/>
-  <div v-if="isError">Some Error Happens</div>
 </template>
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {useQuery} from "@tanstack/vue-query";
-import {getFlats} from "../queries/getFlats";
 import FlatsTable from "./FlatsTable.vue";
-import {useDebounce} from "../composables/useDebounce";
+import type {FormInstance} from 'element-plus'
+import {getFlats} from "../queries/getFlats";
 
 const flatInfo = reactive({
   name: '',
@@ -53,32 +100,33 @@ const flatInfo = reactive({
   minPrice: '',
   maxPrice: '',
 })
-let shouldFetch = ref(true)
-useDebounce(flatInfo, shouldFetch)
+
+const formRef = ref<FormInstance>()
+const isLoading = ref(false)
+const data = ref([])
 
 
-const {isLoading, isError, data} = useQuery({
-  queryKey: ['flats', flatInfo],
-  queryFn: () => getFlats(flatInfo),
-  enabled: shouldFetch,
-})
+const submitForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate(async (valid) => {
+    if (valid) {
+      isLoading.value = true
+      try {
+        data.value = await getFlats(flatInfo)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        isLoading.value = false
+      }
+    } else {
+      data.value = []
+      return false
+    }
+  })
+}
+
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
 </script>
-
-<style>
-.row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.row__title {
-  flex-basis: 400px;
-  margin-right: 10px;
-}
-
-.row__input {
-  flex-basis: 200%;
-}
-
-</style>
